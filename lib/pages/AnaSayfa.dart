@@ -29,23 +29,23 @@ class AnaSayfa extends StatelessWidget {
         title: BlocBuilder<AramaKontrolCubit,bool>(
             builder: (context,kontrol) {
               return kontrol ?
-               TextField(
-                 style: TextStyle(color: Colors.white),
+              TextField(
+                style: const TextStyle(color: Colors.white),
                 onChanged: (aramaSonucu){
                   print("Arama sonucu : $aramaSonucu");
                 },
-                decoration: InputDecoration(
-                  hintText: "Search",
-                  hintStyle: TextStyle(color: Colors.white54),
-                  enabledBorder: UnderlineInputBorder(
-                    borderSide: BorderSide(color: Colors.white54)
-                  )
+                decoration: const InputDecoration(
+                    hintText: "Search",
+                    hintStyle: TextStyle(color: Colors.white54),
+                    enabledBorder: UnderlineInputBorder(
+                        borderSide: BorderSide(color: Colors.white54)
+                    )
                 ),
 
               ) :
               const Text("All ToDos");
             }
-            ),
+        ),
         actions: [
           BlocBuilder<AramaKontrolCubit,bool>(
               builder: (context,kontrol){
@@ -79,37 +79,51 @@ class AnaSayfa extends StatelessWidget {
                     padding: const EdgeInsets.only(top: 15,left: 10,right: 10),
                     child: SizedBox(
                       height: 100,
-                      child: Card(
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(13)
-                        ),
-                        color: cardColor,
-                        child: Padding(
-                          padding: const EdgeInsets.only(left: 10,right: 10),
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [
-                              Column(
-                                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Text(todo.toDoItem,style: const TextStyle(fontSize: 17,color: Colors.white),),
-                                  Text(todo.toDoDate,style: const TextStyle(color: Colors.white54),),
-                                ],
-                              ),
-                              Container(
-                                decoration: const BoxDecoration(
-                                  color: Colors.white,
-                                  borderRadius: BorderRadius.all(Radius.circular(10))
+                      child: GestureDetector(
+                        onTap: (){
+                          Navigator.push(context, MaterialPageRoute(builder: (context) => DetaySayfa(todo: todo)));
+                        },
+                        child: Card(
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(13)
+                          ),
+                          color: cardColor,
+                          child: Padding(
+                            padding: const EdgeInsets.only(left: 10,right: 10),
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                Column(
+                                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Text(todo.toDoItem,style: const TextStyle(fontSize: 17,color: Colors.white),),
+                                    Text(todo.toDoDate,style: const TextStyle(color: Colors.white54),),
+                                  ],
                                 ),
-                                child: IconButton(
-                                    onPressed: (){
-                                      print("${todo.toDoItem} silindi");
-                                    },
-                                    icon: const Icon(Icons.delete_outline,color: Colors.red,)
-                                ),
-                              )
-                            ],
+                                Container(
+                                  decoration: const BoxDecoration(
+                                    color: Colors.white,
+                                    borderRadius: BorderRadius.all(Radius.circular(10))
+                                  ),
+                                  child: IconButton(
+                                      onPressed: (){
+                                        ScaffoldMessenger.of(context).showSnackBar(
+                                          SnackBar(content: Text("${todo.toDoItem} silinsin mi?"),
+                                            action: SnackBarAction(
+                                                label: "Evet",
+                                                onPressed: (){
+                                                  print("Kişi sil : ${todo.toDoId}");
+                                                }
+                                            ),
+                                          ),
+                                        );
+                                      },
+                                      icon: const Icon(Icons.delete_outline,color: Colors.red,)
+                                  ),
+                                )
+                              ],
+                            ),
                           ),
                         ),
                       ),
