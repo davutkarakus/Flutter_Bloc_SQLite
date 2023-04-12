@@ -7,22 +7,15 @@ import 'package:todo_flutter_bloc_sqlite/entity/ToDos.dart';
 import 'package:todo_flutter_bloc_sqlite/pages/DetaySayfa.dart';
 import 'package:todo_flutter_bloc_sqlite/pages/KayitSayfa.dart';
 
+import '../cubit/AnaSayfaCubit.dart';
+
 class AnaSayfa extends StatelessWidget {
   const AnaSayfa({Key? key}) : super(key: key);
 
-  Future<List<ToDos>> showAllToDos() async {
-    var todosList = <ToDos>[];
-    var t1 = ToDos(toDoId: 1, toDoItem: "Arabayı Yıka", toDoDate: "17/10/2022");
-    var t2 = ToDos(toDoId: 2, toDoItem: "Java Öğren", toDoDate: "12/02/2021");
-    var t3 = ToDos(toDoId: 3, toDoItem: "Bitirme Projene Önem Ver", toDoDate: "01/04/2023");
-    todosList.add(t1);
-    todosList.add(t2);
-    todosList.add(t3);
-    return todosList;
-  }
   @override
   Widget build(BuildContext context) {
     bool aramaYapiliyorMu = false;
+    context.read<AnaSayfaCubit>().showTodos();
     return Scaffold(
       backgroundColor: bgColor,
       appBar: AppBar(
@@ -32,7 +25,9 @@ class AnaSayfa extends StatelessWidget {
               TextField(
                 style: const TextStyle(color: Colors.white),
                 onChanged: (aramaSonucu){
-                  print("Arama sonucu : $aramaSonucu");
+
+                  context.read<AnaSayfaCubit>().ara(aramaSonucu);
+
                 },
                 decoration: const InputDecoration(
                     hintText: "Search",
@@ -53,7 +48,7 @@ class AnaSayfa extends StatelessWidget {
                 IconButton(
                     onPressed: (){
                       context.read<AramaKontrolCubit>().aramaKontrol(aramaYapiliyorMu);
-
+                      context.read<AnaSayfaCubit>().showTodos();
                     },
                     icon: Icon(Icons.cancel)) :
                 IconButton(
@@ -66,13 +61,11 @@ class AnaSayfa extends StatelessWidget {
           ),
         ],
       ),
-      body: FutureBuilder<List<ToDos>>(
-        future: showAllToDos(),
-        builder: (context,snapshot){
-          if (snapshot.hasData){
-            var todoList = snapshot.data;
+      body: BlocBuilder<AnaSayfaCubit,List<ToDos>>(
+        builder: (context,todoList){
+          if (todoList.isNotEmpty){
             return ListView.builder(
-                itemCount: todoList!.length,
+                itemCount: todoList.length,
                 itemBuilder: (context,indeks){
                   var todo = todoList[indeks];
                   return Padding(
@@ -113,7 +106,7 @@ class AnaSayfa extends StatelessWidget {
                                             action: SnackBarAction(
                                                 label: "Evet",
                                                 onPressed: (){
-                                                  print("Kişi sil : ${todo.toDoId}");
+                                                  context.read<AnaSayfaCubit>().sil(todo.toDoId);
                                                 }
                                             ),
                                           ),
