@@ -1,14 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:todo_flutter_bloc_sqlite/cubit/KayitSayfaCubit.dart';
 
 
 class KayitSayfa extends StatelessWidget {
 
   var tfToDoItem = TextEditingController();
   var tfToDoDate = TextEditingController();
-
-  Future<void> kayit(String toDoItem,String toDoDate) async {
-    print("Kayıt : ${toDoItem} - ${toDoDate}");
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -46,7 +44,8 @@ class KayitSayfa extends StatelessWidget {
               SizedBox(
                 width: double.infinity,
                 child: ElevatedButton(
-                    onPressed: (){kayit(tfToDoItem.text, tfToDoDate.text);
+                    onPressed: (){
+                      context.read<KayitSayfaCubit>().kayit(tfToDoItem.text, tfToDoDate.text);
                     },
                     child: Text("SAVE")
                 ),
