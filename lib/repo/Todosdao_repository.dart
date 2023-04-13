@@ -1,34 +1,47 @@
 
+import 'package:todo_flutter_bloc_sqlite/sqlite/veritabani_yardimcisi.dart';
+
 import '../entity/ToDos.dart';
 
 class TodosDaoRepository {
   Future<void> todoKayit(String toDoItem,String toDoDate) async {
-    print("Kayıt : ${toDoItem} - ${toDoDate}");
+    var db = await VeritabaniYardimcisi.veritabaniErisim();
+    var bilgiler = Map<String,dynamic>();
+    bilgiler["todo_description"] = toDoItem;
+    bilgiler["todo_date"] = toDoDate;
+    await db.insert("todos", bilgiler);
   }
 
   Future<void> todoGuncelle(int toDoId, String toDoItem,String toDoDate) async {
-    print("Güncelle : ${toDoId} ${toDoItem} - ${toDoDate}");
+    var db = await VeritabaniYardimcisi.veritabaniErisim();
+    var bilgiler = Map<String,dynamic>();
+    bilgiler["todo_description"] = toDoItem;
+    bilgiler["todo_date"] = toDoDate;
+    await db.update("todos", bilgiler,where: "todo_id=?",whereArgs: [toDoId]);
   }
 
   Future<List<ToDos>> showAllToDos() async {
-    var todosList = <ToDos>[];
-    var t1 = ToDos(toDoId: 1, toDoItem: "Arabayı Yıka", toDoDate: "17/10/2022");
-    var t2 = ToDos(toDoId: 2, toDoItem: "Java Öğren", toDoDate: "12/02/2021");
-    var t3 = ToDos(toDoId: 3, toDoItem: "Bitirme Projene Önem Ver", toDoDate: "01/04/2023");
-    todosList.add(t1);
-    todosList.add(t2);
-    todosList.add(t3);
-    return todosList;
+    var db = await VeritabaniYardimcisi.veritabaniErisim();
+    List<Map<String,dynamic>> maps = await db.rawQuery("SELECT * FROM todos");
+    
+    return List.generate(maps.length, (i) {
+      var satir = maps[i];
+      return ToDos(toDoId: satir["todo_id"], toDoItem: satir["todo_description"], toDoDate: satir["todo_date"]);
+
+    });
   }
 
   Future<List<ToDos>> todoAra(String aramaKelimesi) async {
-    var todosList = <ToDos>[];
-    var t1 = ToDos(toDoId: 1, toDoItem: "Arabayı Yıka", toDoDate: "17/10/2022");;
-    todosList.add(t1);
-    return todosList;
+    var db = await VeritabaniYardimcisi.veritabaniErisim();
+    List<Map<String,dynamic>> maps = await db.rawQuery("SELECT * FROM todos WHERE todo_description like '%$aramaKelimesi%'");
+
+    return List.generate(maps.length, (i) {
+      var satir = maps[i];
+      return ToDos(toDoId: satir["todo_id"], toDoItem: satir["todo_description"], toDoDate: satir["todo_date"]);
+    });
   }
   Future<void> todoSil(int id) async {
-    print("Kişi sil : $id");
-    await showAllToDos();
+    var db = await VeritabaniYardimcisi.veritabaniErisim();
+    await db.delete("todos",where: "todo_id=?",whereArgs: [id]);
   }
 }

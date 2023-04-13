@@ -19,5 +19,6 @@ class AnaSayfaCubit extends Cubit<List<ToDos>> {
   }
   Future<void> sil(int id) async {
     trepo.todoSil(id);
+    await showTodos();
   }
 }

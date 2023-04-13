@@ -74,7 +74,9 @@ class AnaSayfa extends StatelessWidget {
                       height: 100,
                       child: GestureDetector(
                         onTap: (){
-                          Navigator.push(context, MaterialPageRoute(builder: (context) => DetaySayfa(todo: todo)));
+                          Navigator.push(context, MaterialPageRoute(builder: (context) => DetaySayfa(todo: todo))).then((value) {
+                            context.read<AnaSayfaCubit>().showTodos();
+                          });
                         },
                         child: Card(
                           shape: RoundedRectangleBorder(
@@ -90,7 +92,7 @@ class AnaSayfa extends StatelessWidget {
                                   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
-                                    Text(todo.toDoItem,style: const TextStyle(fontSize: 17,color: Colors.white),),
+                                    SizedBox(width:270,child: Text(todo.toDoItem,style: const TextStyle(fontSize: 17,color: Colors.white),maxLines: 2,overflow: TextOverflow.ellipsis,)),
                                     Text(todo.toDoDate,style: const TextStyle(color: Colors.white54),),
                                   ],
                                 ),
@@ -133,7 +135,9 @@ class AnaSayfa extends StatelessWidget {
         padding: const EdgeInsets.all(8.0),
         child: FloatingActionButton(
           onPressed: () {
-            Navigator.push(context, MaterialPageRoute(builder: (context) => KayitSayfa()));
+            Navigator.push(context, MaterialPageRoute(builder: (context) => KayitSayfa())).then((value) {
+              context.read<AnaSayfaCubit>().showTodos();
+            });
           },
           child: const Icon(Icons.add),
         ),
